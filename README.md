@@ -10,7 +10,7 @@ Generate SRT (and VTT) subtitles from audio or video files using OpenAI Whisper.
 - Export `.srt`, `.vtt`, or both
 - GPU auto-detection (CUDA → FP16 for speed) or force CPU
 - Custom model weights directory via `--model-dir`
- - Generación de subtítulos en bloques pequeños tipo TikTok / Shorts con `--max-words` y `--max-chars`
+- Generate short, TikTok/Shorts-style subtitle blocks using `--max-words` and `--max-chars`
 
 ## Requirements
 - Windows (tested) / Linux / macOS
@@ -18,7 +18,7 @@ Generate SRT (and VTT) subtitles from audio or video files using OpenAI Whisper.
 - FFmpeg installed and on PATH
 - Python packages: `openai-whisper`, `torch` (+ CUDA build if using GPU)
 
-Install packages (already done in your environment):
+Install packages:
 ```powershell
 py -3.12 -m pip install -U pip openai-whisper
 ```
@@ -42,11 +42,10 @@ Translate to English:
 py -3.12 generate_srt.py "entrevista.wav" -m medium --task translate -l es
 ```
 
-## TikTok / Shorts Chunked Captions
-Para generar bloques muy cortos (por ejemplo 3–5 palabras) que se vean mejor en vertical:
+## Chunked Captions
+To generate very short subtitle blocks (e.g., 3–5 words) that look better on vertical videos:
 
 ```powershell
-
 # Maximum 4 words per block
 py -3.12 generate_srt.py "video.mp4" -m small -l es --max-words 4
 
@@ -57,20 +56,20 @@ py -3.12 generate_srt.py "video.mp4" -m medium -l es --max-words 5 --max-chars 2
 py -3.12 generate_srt.py "video.mp4" -m base -l es --max-chars 32
 ```
 
-Archivos producidos (además de los normales):
-- `nombre_chunked.srt`
-- `nombre_chunked.vtt` (si usas `-f vtt` o `-f both`)
+Additional files produced (besides the standard ones):
+- `name_chunked.srt`
+- `name_chunked.vtt` (if you use `-f vtt` or `-f both`)
 
-Cómo funciona el corte:
-1. Activa `word_timestamps` para obtener marcas de tiempo por palabra (si el backend lo soporta).
-2. Acumula palabras hasta que se excedería `--max-words` o `--max-chars`.
-3. Cierra el bloque y abre uno nuevo.
-4. Si el modelo no devuelve palabras individuales, hace un reparto aproximado dentro del segmento.
+How chunking works:
+1. Enables `word_timestamps` to get per-word timing (if supported by the backend).
+2. Accumulates words until `--max-words` or `--max-chars` would be exceeded.
+3. Closes the block and starts a new one.
+4. If the model does not return individual words, it approximates the split within the segment.
 
-Sugerencias:
-- 3–5 palabras suelen ser legibles para ritmos rápidos.
-- Combina un límite de palabras y caracteres para evitar líneas muy largas.
-- Revisa el resultado y ajusta valores según el estilo del video.
+Tips:
+- 3–5 words per block are usually readable for fast-paced content.
+- Combine word and character limits to avoid overly long lines.
+- Review the output and adjust values to fit your video style.
 
 ## Example (Your Workflow)
 Exact command you ran:
@@ -82,7 +81,7 @@ What happens step-by-step:
 2. Creates/uses custom model cache folder: `.\models` (so weights like `medium.pt` live in the project).
 3. Loads the Whisper `medium` model (downloads once if missing).
 4. Processes the WAV file (or all supported media if a folder given).
-5. Generates segments and writes `tomate_pesto_voz.prproj_mixdown_Samson.srt` next to the input (or `subs/` for folder mode).
+5. Generates segments and writes `name.srt` next to the input (or `subs/` for folder mode).
 6. You can import the SRT into Adobe Premiere Pro.
 
 ## Supported Media Extensions
@@ -110,7 +109,7 @@ Move-Item $env:USERPROFILE\.cache\whisper\medium.pt .\models\medium.pt
 | tiny | ~75 MB | Fastest, lowest accuracy |
 | base | ~142 MB | Lightweight |
 | small | ~466 MB | Good balance |
-| medium | ~1.5 GB | Higher accuracy (your current choice) |
+| medium | ~1.5 GB | Higher accuracy (current choice) |
 | large-v2 | ~3.1 GB | Older large option |
 | large-v3 | ~3.2 GB | Latest high accuracy |
 
@@ -161,6 +160,3 @@ options:
 
 ## License / Usage
 Use responsibly. Whisper models are released under the MIT license (see upstream repo). Check media rights before transcribing.
-
----
-Questions or want enhancements (batch script, preload, JSON output)? Open an issue or ask.

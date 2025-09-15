@@ -119,7 +119,7 @@ def main():
             return None  # No chunking requested
 
         # Whisper >= 202311 uses result["segments"][i]["words"] when word_timestamps enabled.
-        # Para asegurar palabras, pediremos word_timestamps=True en transcribe si se solicita chunking.
+        # To ensure word-level timestamps, we will request word_timestamps=True in transcribe if chunking is requested.
         chunk_list = []
         idx = 1
         for seg in segments:
